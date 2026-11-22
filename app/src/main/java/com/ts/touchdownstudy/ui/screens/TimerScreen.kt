@@ -89,11 +89,10 @@ fun TimerScreen(
             }
             Spacer(modifier = Modifier.height(24.dp))
             TimerDisplay(
-                secondsRemaining = uiState.secondsRemaining,
+                elapsedSeconds = uiState.elapsedSeconds,
                 isRunning = uiState.isRunning,
                 onStartClick = viewModel::startOrResume,
-                onPauseClick = viewModel::pauseByUser,
-                onResetClick = viewModel::reset
+                onEndSessionClick = viewModel::endSession
             )
         }
     }

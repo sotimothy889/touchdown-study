@@ -8,6 +8,8 @@ import com.ts.touchdownstudy.model.LeaderboardEntry
 import com.ts.touchdownstudy.model.SpriteResponse
 import com.ts.touchdownstudy.model.StudyTimeRequest
 import com.ts.touchdownstudy.model.StudyTimeResponse
+import com.ts.touchdownstudy.model.UpdateUsernameRequest
+import com.ts.touchdownstudy.model.UserStats
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -46,5 +48,13 @@ class DecorationRepository @Inject constructor(
 
     suspend fun buyDecoration(): Decoration {
         return apiService.buyDecoration()
+    }
+
+    suspend fun getUserStats(): UserStats {
+        return apiService.getUserStats()
+    }
+
+    suspend fun updateUsername(newUsername: String): UserStats {
+        return apiService.updateUsername(UpdateUsernameRequest(username = newUsername))
     }
 }

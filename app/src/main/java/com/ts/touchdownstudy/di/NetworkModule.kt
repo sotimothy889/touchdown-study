@@ -1,5 +1,6 @@
 package com.ts.touchdownstudy.di
 
+import com.ts.touchdownstudy.data.remote.AuthInterceptor
 import com.ts.touchdownstudy.data.remote.TouchdownApiService
 import dagger.Module
 import dagger.Provides
@@ -27,11 +28,12 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
         return OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
             .addInterceptor(loggingInterceptor)
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)

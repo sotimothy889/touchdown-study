@@ -9,16 +9,20 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun TimerDisplay(
-    secondsRemaining: Int,
+    elapsedSeconds: Int,
     isRunning: Boolean,
     onStartClick: () -> Unit,
-    onPauseClick: () -> Unit,
-    onResetClick: () -> Unit,
+    onEndSessionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val minutes = secondsRemaining / 60
-    val seconds = secondsRemaining % 60
-    val formattedTime = "%02d:%02d".format(minutes, seconds)
+    val hours = elapsedSeconds / 3600
+    val minutes = (elapsedSeconds % 3600) / 60
+    val seconds = elapsedSeconds % 60
+    val formattedTime = if (hours > 0) {
+        "%d:%02d:%02d".format(hours, minutes, seconds)
+    } else {
+        "%02d:%02d".format(minutes, seconds)
+    }
 
     Column(
         modifier = modifier.padding(16.dp),
@@ -32,20 +36,18 @@ fun TimerDisplay(
 
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             if (isRunning) {
-                Button(onClick = onPauseClick) {
-                    Text("Pause")
+                Button(onClick = onEndSessionClick) {
+                    Text("End Session")
                 }
             } else {
-                Button(
-                    onClick = onStartClick,
-                    enabled = secondsRemaining > 0
-                ) {
+                Button(onClick = onStartClick) {
                     Text("Start")
                 }
-            }
-
-            OutlinedButton(onClick = onResetClick) {
-                Text("Reset")
+                if (elapsedSeconds > 0) {
+                    Button(onClick = onEndSessionClick) {
+                        Text("End Session")
+                    }
+                }
             }
         }
     }

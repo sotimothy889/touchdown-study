@@ -7,6 +7,8 @@ import com.ts.touchdownstudy.model.LeaderboardEntry
 import com.ts.touchdownstudy.model.SpriteResponse
 import com.ts.touchdownstudy.model.StudyTimeRequest
 import com.ts.touchdownstudy.model.StudyTimeResponse
+import com.ts.touchdownstudy.model.UpdateUsernameRequest
+import com.ts.touchdownstudy.model.UserStats
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -37,4 +39,10 @@ interface TouchdownApiService {
 
     @POST("api/decorations/buy")
     suspend fun buyDecoration(): Decoration
+
+    @GET("api/user/stats")
+    suspend fun getUserStats(): UserStats
+
+    @POST("api/user/username")
+    suspend fun updateUsername(@Body request: UpdateUsernameRequest): UserStats
 }

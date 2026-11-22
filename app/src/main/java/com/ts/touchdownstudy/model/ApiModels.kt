@@ -46,3 +46,16 @@ data class DecorationImageResponse(
     val id: String = "",
     val imageUrl: String = ""
 )
+
+@Serializable
+data class UpdateUsernameRequest(
+    val username: String
+)
+
+@Serializable
+data class UserStats(
+    val userId: String,
+    val username: String,
+    val studyTimeSeconds: Int,
+    val rank: Int
+)

@@ -16,7 +16,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TimerUiState(
-    val secondsRemaining: Int = 60,
+    val elapsedSeconds: Int = 0,
     val isRunning: Boolean = false,
     val coins: Int = 0,
     val spriteImageUrl: String = ""
@@ -63,28 +63,53 @@ class TimerViewModel @Inject constructor(
     }
 
     fun startOrResume() {
-        if (_uiState.value.isRunning || _uiState.value.secondsRemaining <= 0) return
+        if (_uiState.value.isRunning) return
 
         wasRunningBeforeBackground = false
         _uiState.update { it.copy(isRunning = true) }
 
         timerJob = viewModelScope.launch {
-            while (_uiState.value.secondsRemaining > 0) {
+            while (_uiState.value.isRunning) {
                 delay(1000L)
                 _uiState.update { current ->
-                    val nextTime = (current.secondsRemaining - 1).coerceAtLeast(0)
-                    current.copy(
-                        secondsRemaining = nextTime,
-                        isRunning = nextTime > 0
-                    )
+                    if (current.isRunning) {
+                        current.copy(elapsedSeconds = current.elapsedSeconds + 1)
+                    } else {
+                        current
+                    }
                 }
             }
         }
     }
 
-    fun pauseByUser() {
-        wasRunningBeforeBackground = false
+    fun endSession() {
+        val seconds = _uiState.value.elapsedSeconds
         stopTicker()
+
+        viewModelScope.launch {
+            if (seconds > 0) {
+                try {
+                    val response = decorationRepository.submitStudyTime(seconds)
+                    if (response.success) {
+                        _uiState.update {
+                            it.copy(
+                                coins = response.totalCoins,
+                                elapsedSeconds = 0,
+                                isRunning = false
+                            )
+                        }
+                    } else {
+                        _uiState.update { it.copy(elapsedSeconds = 0, isRunning = false) }
+                    }
+                } catch (e: Exception) {
+                    _uiState.update { it.copy(elapsedSeconds = 0, isRunning = false) }
+                }
+            } else {
+                _uiState.update { it.copy(elapsedSeconds = 0, isRunning = false) }
+            }
+
+            // TODO: Navigation event to the reward/reveal screen implemented later
+        }
     }
 
     fun onAppBackgrounded() {
@@ -98,12 +123,6 @@ class TimerViewModel @Inject constructor(
         if (wasRunningBeforeBackground) {
             startOrResume()
         }
-    }
-
-    fun reset(initialSeconds: Int = 60) {
-        wasRunningBeforeBackground = false
-        stopTicker()
-        _uiState.value = _uiState.value.copy(secondsRemaining = initialSeconds, isRunning = false)
     }
 
     private fun stopTicker() {
