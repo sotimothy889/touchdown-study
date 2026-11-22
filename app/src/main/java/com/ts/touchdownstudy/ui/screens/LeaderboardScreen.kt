@@ -9,7 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ts.touchdownstudy.model.LeaderboardEntry
 import com.ts.touchdownstudy.ui.components.LeaderboardList
+import com.ts.touchdownstudy.ui.components.LeaderboardListItem
 import com.ts.touchdownstudy.viewmodel.LeaderboardViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,9 +23,17 @@ fun LeaderboardScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Leaderboard") },
+                navigationIcon = {
+                    TextButton(onClick = onBackClick) {
+                        Text("Back")
+                    }
+                }
+            )
+        }
     ) { innerPadding ->
-        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("Leaderboard")
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -61,9 +71,30 @@ fun LeaderboardScreen(
                     )
                 }
                 else -> {
-                    LeaderboardList(entries = uiState.entries)
+                    Column(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        LeaderboardList(
+                            entries = uiState.entries,
+                            modifier = Modifier.weight(1f)
+                        )
+                        uiState.userStats?.let { stats ->
+                            HorizontalDivider()
+                            LeaderboardListItem(
+                                entry = LeaderboardEntry(
+                                    userId = stats.userId,
+                                    username = stats.username,
+                                    studyTimeSeconds = stats.studyTimeSeconds,
+                                    rank = stats.rank
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp)
+                            )
+                        }
+                    }
                 }
             }
         }
-    }}
+    }
 }

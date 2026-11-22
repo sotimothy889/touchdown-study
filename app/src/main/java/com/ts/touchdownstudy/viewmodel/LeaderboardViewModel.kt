@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ts.touchdownstudy.data.repository.DecorationRepository
 import com.ts.touchdownstudy.model.LeaderboardEntry
+import com.ts.touchdownstudy.model.UserStats
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,6 +15,7 @@ import javax.inject.Inject
 
 data class LeaderboardUiState(
     val entries: List<LeaderboardEntry> = emptyList(),
+    val userStats: UserStats? = null,
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )
@@ -35,7 +37,18 @@ class LeaderboardViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             try {
                 val entries = decorationRepository.getLeaderboard()
-                _uiState.update { it.copy(entries = entries, isLoading = false) }
+                val stats = try {
+                    decorationRepository.getUserStats()
+                } catch (e: Exception) {
+                    null
+                }
+                _uiState.update {
+                    it.copy(
+                        entries = entries,
+                        userStats = stats,
+                        isLoading = false
+                    )
+                }
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
