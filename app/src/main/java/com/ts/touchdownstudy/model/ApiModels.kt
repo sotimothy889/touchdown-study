@@ -35,3 +35,14 @@ data class Decoration(
     val isUnlocked: Boolean,
     val imageUrl: String = ""
 )
+
+@Serializable
+data class SpriteResponse(
+    val imageUrl: String = ""
+)
+
+@Serializable
+data class DecorationImageResponse(
+    val id: String = "",
+    val imageUrl: String = ""
+)

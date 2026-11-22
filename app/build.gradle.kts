@@ -72,4 +72,5 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.retrofit)
     implementation(libs.retrofit.serialization)
+    implementation(libs.coil.compose)
 }

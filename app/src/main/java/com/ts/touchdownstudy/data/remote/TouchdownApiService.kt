@@ -2,7 +2,9 @@ package com.ts.touchdownstudy.data.remote
 
 import com.ts.touchdownstudy.model.CoinResponse
 import com.ts.touchdownstudy.model.Decoration
+import com.ts.touchdownstudy.model.DecorationImageResponse
 import com.ts.touchdownstudy.model.LeaderboardEntry
+import com.ts.touchdownstudy.model.SpriteResponse
 import com.ts.touchdownstudy.model.StudyTimeRequest
 import com.ts.touchdownstudy.model.StudyTimeResponse
 import retrofit2.http.Body
@@ -21,9 +23,18 @@ interface TouchdownApiService {
     @POST("api/study/submit")
     suspend fun submitStudyTime(@Body request: StudyTimeRequest): StudyTimeResponse
 
+    @GET("api/sprite")
+    suspend fun getSprite(): SpriteResponse
+
     @GET("api/decorations")
     suspend fun getDecorations(): List<Decoration>
 
-    @POST("api/decorations/{id}/buy")
-    suspend fun buyDecoration(@Path("id") decorationId: String): Decoration
+    @GET("api/decorations/images")
+    suspend fun getDecorationImages(): List<DecorationImageResponse>
+
+    @GET("api/decorations/{id}/image")
+    suspend fun getDecorationImage(@Path("id") id: String): DecorationImageResponse
+
+    @POST("api/decorations/buy")
+    suspend fun buyDecoration(): Decoration
 }

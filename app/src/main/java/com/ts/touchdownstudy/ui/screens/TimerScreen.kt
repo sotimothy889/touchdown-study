@@ -25,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import com.ts.touchdownstudy.R
 import com.ts.touchdownstudy.ui.components.TimerDisplay
 import com.ts.touchdownstudy.viewmodel.TimerViewModel
@@ -68,16 +69,24 @@ fun TimerScreen(
             }
         }
 
-        // Center content: Placeholder image and timer display
+        // Center content: Sprite image and timer display
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                contentDescription = "Placeholder Decoration Image",
-                modifier = Modifier.size(180.dp)
-            )
+            if (uiState.spriteImageUrl.isNotBlank()) {
+                AsyncImage(
+                    model = uiState.spriteImageUrl,
+                    contentDescription = "Main Sprite Image",
+                    modifier = Modifier.size(180.dp)
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                    contentDescription = "Placeholder Decoration Image",
+                    modifier = Modifier.size(180.dp)
+                )
+            }
             Spacer(modifier = Modifier.height(24.dp))
             TimerDisplay(
                 secondsRemaining = uiState.secondsRemaining,

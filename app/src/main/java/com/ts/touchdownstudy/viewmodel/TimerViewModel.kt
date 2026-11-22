@@ -18,7 +18,8 @@ import kotlinx.serialization.Serializable
 data class TimerUiState(
     val secondsRemaining: Int = 60,
     val isRunning: Boolean = false,
-    val coins: Int = 0
+    val coins: Int = 0,
+    val spriteImageUrl: String = ""
 )
 
 @HiltViewModel
@@ -36,6 +37,7 @@ class TimerViewModel @Inject constructor(
 
     init {
         loadCoins()
+        loadSprite()
     }
 
     fun loadCoins() {
@@ -43,6 +45,17 @@ class TimerViewModel @Inject constructor(
             try {
                 val response = decorationRepository.getCoins()
                 _uiState.update { it.copy(coins = response.coins) }
+            } catch (e: Exception) {
+                // Fallback/ignore if API is not running/mocked
+            }
+        }
+    }
+
+    fun loadSprite() {
+        viewModelScope.launch {
+            try {
+                val response = decorationRepository.getSprite()
+                _uiState.update { it.copy(spriteImageUrl = response.imageUrl) }
             } catch (e: Exception) {
                 // Fallback/ignore if API is not running/mocked
             }
